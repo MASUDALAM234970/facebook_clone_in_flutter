@@ -1,7 +1,12 @@
 import 'package:facebook_clone_in_flutter/features/auth/presentation/screens/create_account_screee.dart';
 import 'package:facebook_clone_in_flutter/features/auth/presentation/screens/login_screen.dart';
+import 'package:facebook_clone_in_flutter/features/auth/presentation/screens/verify_email_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'core/screens/home_screen.dart';
+import 'core/screens/loader.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -15,13 +20,31 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(),
-      home: LoginScreen(),
+      debugShowCheckedModeBanner: false,
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Loader();
+          }
+
+          if (snapshot.hasData) {
+            final user = snapshot.data;
+
+            if (user != null && user.emailVerified) {
+              return const HomeScreen();
+            } else {
+              return const VerifyEmailScreen();
+            }
+          } else {
+            return const LoginScreen();
+            //return const CreateAccountScreen();
+          }
+        },
+      ),
     );
   }
 }

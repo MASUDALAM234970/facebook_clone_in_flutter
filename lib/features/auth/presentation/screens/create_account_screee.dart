@@ -14,14 +14,16 @@ import '/core/constants/constants.dart';
 
 final _formKey = GlobalKey<FormState>();
 
-class CreateAccountScreee extends StatefulWidget {
-  const CreateAccountScreee({super.key});
+class CreateAccountScreen extends StatefulWidget {
+  static const routeName = '/create-account';
+  const CreateAccountScreen({super.key});
+
 
   @override
-  State<CreateAccountScreee> createState() => _CreateAccountScreeeState();
+  State<CreateAccountScreen> createState() => _CreateAccountScreenState();
 }
 
-class _CreateAccountScreeeState extends State<CreateAccountScreee> {
+class _CreateAccountScreenState extends State<CreateAccountScreen> {
   File? image;
   DateTime? birthday;
   String gender = 'male';

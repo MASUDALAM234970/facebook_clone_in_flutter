@@ -1,5 +1,6 @@
 import 'package:facebook_clone_in_flutter/core/constants/constants.dart';
 import 'package:facebook_clone_in_flutter/core/widgets/round_button.dart';
+import 'package:facebook_clone_in_flutter/features/auth/presentation/screens/create_account_screee.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/round_text_field.dart';
@@ -81,7 +82,15 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ) ,Column(
               children: [
-                RoundButton(onPressed: () {}, label: "Create New Account",
+                RoundButton(onPressed: () {
+
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const CreateAccountScreen(),
+                    ),
+                  );
+
+                }, label: "Create New Account",
                   color: Colors.transparent,),
                 const SizedBox(height: 10),
                 Image.asset(

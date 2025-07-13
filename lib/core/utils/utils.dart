@@ -20,3 +20,16 @@ Future<File?> pickImage() async {
 
   return image;
 }
+
+// Show Toast Message
+void showToastMessage({
+  required String text,
+}) {
+  Fluttertoast.showToast(
+    msg: text,
+    backgroundColor: Colors.black54,
+    fontSize: 18,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.BOTTOM,
+  );
+}
