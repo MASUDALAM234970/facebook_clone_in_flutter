@@ -1,3 +1,4 @@
+import 'package:facebook_clone_in_flutter/features/auth/presentation/screens/create_account_screee.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
 
       ),
-      home: const Text( 'Flutter Demo Home Page'),
+      home: CreateAccountScreee(),
     );
   }
 }
