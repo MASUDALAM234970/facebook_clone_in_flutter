@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "362944004167",
+    "firebase_url": "https://count20-default-rtdb.firebaseio.com",
+    "project_id": "count20",
+    "storage_bucket": "count20.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:362944004167:android:77b0673e3964459157b162",
+        "android_client_info": {
+          "package_name": "com.example.count20"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB51wC5ukaaE7aHIq6RfbDWguIMrOmlVqw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:362944004167:android:0953047e6db29fd957b162",
+        "android_client_info": {
+          "package_name": "com.example.facebook_clone_in_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB51wC5ukaaE7aHIq6RfbDWguIMrOmlVqw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
