@@ -1,29 +1,32 @@
 import 'dart:io';
 
-import 'package:facebook_clone_in_flutter/core/constants/app_colors.dart';
-import 'package:facebook_clone_in_flutter/core/widgets/pick_image_widget.dart';
-import 'package:facebook_clone_in_flutter/core/widgets/round_button.dart';
-import 'package:facebook_clone_in_flutter/core/widgets/round_text_field.dart';
-import 'package:facebook_clone_in_flutter/features/auth/presentation/widgets/birthday_picker.dart';
-import 'package:facebook_clone_in_flutter/features/auth/presentation/widgets/gender_radio_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/constants.dart';
 import '../../../../core/utils/utils.dart';
+import '../../../../core/widgets/pick_image_widget.dart';
+import '../../../../core/widgets/round_button.dart';
+import '../../../../core/widgets/round_text_field.dart';
+import '../../providers/auth_provider.dart';
 import '../../utils/utils.dart';
-import '/core/constants/constants.dart';
+import '../widgets/birthday_picker.dart';
+import '../widgets/gender_radio_tile.dart';
 
 final _formKey = GlobalKey<FormState>();
 
-class CreateAccountScreen extends StatefulWidget {
-  static const routeName = '/create-account';
+class CreateAccountScreen extends ConsumerStatefulWidget {
   const CreateAccountScreen({super.key});
 
+  static const routeName = '/create-account';
 
   @override
-  State<CreateAccountScreen> createState() => _CreateAccountScreenState();
+  ConsumerState<CreateAccountScreen> createState() =>
+      _CreateAccountScreenState();
 }
 
-class _CreateAccountScreenState extends State<CreateAccountScreen> {
+class _CreateAccountScreenState extends ConsumerState<CreateAccountScreen> {
   File? image;
   DateTime? birthday;
   String gender = 'male';
@@ -53,12 +56,35 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     super.dispose();
   }
 
+  Future<void> createAccount() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      setState(() => isLoading = true);
+      await ref
+          .read(authProvider)
+          .createAccount(
+            fullName: '${_fNameController.text} ${_lNameController.text}',
+            birthday: birthday ?? DateTime.now(),
+            gender: gender,
+            email: _emailController.text,
+            password: _passwordController.text,
+            image: image,
+          )
+          .then((credential) {
+        if (!credential!.user!.emailVerified) {
+          Navigator.pop(context);
+        }
+      }).catchError((_) {
+        setState(() => isLoading = false);
+      });
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       backgroundColor: AppColors.realWhiteColor,
-
       appBar: AppBar(),
       body: SingleChildScrollView(
         child: Padding(
@@ -68,27 +94,30 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             child: Column(
               children: [
                 GestureDetector(
-                    onTap: () async {
-                      image = await pickImage();
-                      setState(() {});
-                    },
-                    child: PickImageWidget(image: image)),
+                  onTap: () async {
+                    image = await pickImage();
+                    setState(() {});
+                  },
+                  child: PickImageWidget(image: image),
+                ),
                 const SizedBox(height: 20),
                 Row(
                   children: [
+                    // First Name Text Field
                     Expanded(
                       child: RoundTextField(
                         controller: _fNameController,
-                        hintText: 'First Name',
+                        hintText: 'First name',
                         textInputAction: TextInputAction.next,
                         validator: validateName,
                       ),
                     ),
                     const SizedBox(width: 10),
+                    // Last Name Text Field
                     Expanded(
                       child: RoundTextField(
                         controller: _lNameController,
-                        hintText: 'Last Name',
+                        hintText: 'Last name',
                         textInputAction: TextInputAction.next,
                         validator: validateName,
                       ),
@@ -115,6 +144,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   },
                 ),
                 const SizedBox(height: 20),
+                // Phone number / email text field
                 RoundTextField(
                   controller: _emailController,
                   hintText: 'Email',
@@ -123,17 +153,27 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   validator: validateEmail,
                 ),
                 const SizedBox(height: 20),
-
+                // Password Text Field
+                RoundTextField(
+                  controller: _passwordController,
+                  hintText: 'Password',
+                  textInputAction: TextInputAction.done,
+                  keyboardType: TextInputType.visiblePassword,
+                  validator: validatePassword,
+                  isPassword: true,
+                ),
                 const SizedBox(height: 20),
-                RoundButton(
-                  onPressed: () {},
-                  label: "Create Account",
-                )
+                isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : RoundButton(
+                        onPressed: createAccount,
+                        label: 'Create Account',
+                      ),
               ],
             ),
           ),
         ),
       ),
-    ); // <-- ✅ This closes Scaffold
+    );
   }
 }

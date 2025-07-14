@@ -1,21 +1,24 @@
-import 'package:facebook_clone_in_flutter/core/constants/constants.dart';
-import 'package:facebook_clone_in_flutter/core/widgets/round_button.dart';
-import 'package:facebook_clone_in_flutter/features/auth/presentation/screens/create_account_screee.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/widgets/round_text_field.dart';
-import '../../utils/utils.dart';
+import '../../providers/auth_provider.dart';
+import '/core/constants/constants.dart';
+import '/core/widgets/round_button.dart';
+import '/core/widgets/round_text_field.dart';
+import '/features/auth/utils/utils.dart';
+import 'create_account_screee.dart';
 
-final _formkey = GlobalKey<FormState>();
+final _formKey = GlobalKey<FormState>();
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
 
@@ -35,6 +38,18 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  Future<void> login() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      setState(() => isLoading = true);
+      await ref.read(authProvider).signIn(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,63 +58,62 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: Constants.defaultPadding,
         child: Column(
           mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Image.asset(
               'assets/icons/fb_logo.png',
               width: 60,
             ),
             Form(
-              key: _formkey,
+              key: _formKey,
               child: Column(
                 children: [
                   RoundTextField(
                     controller: _emailController,
                     hintText: 'Email',
-                    textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
                     validator: validateEmail,
                   ),
                   const SizedBox(height: 15),
                   RoundTextField(
                     controller: _passwordController,
                     hintText: 'Password',
-                    textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.visiblePassword,
+                    textInputAction: TextInputAction.done,
+                    isPassword: true,
                     validator: validatePassword,
                   ),
                   const SizedBox(height: 15),
-                  RoundButton(onPressed: () {}, label: 'Login'),
+                  RoundButton(onPressed: login, label: 'Login'),
                   const SizedBox(height: 15),
                   const Text(
-                    'Forget password?',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 16,
-                    ),
+                    'Forget Password',
+                    style: TextStyle(fontSize: 18),
                   ),
                 ],
               ),
-            ) ,Column(
+            ),
+            Column(
               children: [
-                RoundButton(onPressed: () {
+                RoundButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const CreateAccountScreen(),
+                      ),
+                    );
 
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const CreateAccountScreen(),
-                    ),
-                  );
-
-                }, label: "Create New Account",
-                  color: Colors.transparent,),
-                const SizedBox(height: 10),
+                  },
+                  label: 'Create new account',
+                  color: Colors.transparent,
+                ),
                 Image.asset(
                   'assets/icons/meta.png',
                   height: 50,
                 ),
-
               ],
-            )
+            ),
           ],
         ),
       ),
